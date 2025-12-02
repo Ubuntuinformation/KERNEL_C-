@@ -1,0 +1,143 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║                    HubbleOS v2.0 - Bootable ISO                          ║
+║                   Unix-like Operating System for x86                      ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+DATA DE LANÇAMENTO: Dezembro 2024
+VERSÃO: 2.0
+ARQUITETURA: x86 32-bit BIOS Multiboot
+STATUS: ✅ Completo e Funcional
+
+═══════════════════════════════════════════════════════════════════════════
+
+CONTEÚDO DA ISO:
+
+1. BOOTLOADER
+   • Multiboot header (GRUB2 compatível)
+   • Inicialização automática em qualquer PC
+
+2. KERNEL COMPLETO (56 KB)
+   • Shell interativo com 30+ comandos
+   • Parser de argumentos avançado
+   • Virtual filesystem com suporte a diretórios
+   • Permissões Unix (rwx)
+
+3. GERENCIADOR DE PACOTES (HPM)
+   • 150+ pacotes pré-configurados
+   • 13 categorias (dev, lang, vcs, shell, util, net, sys, lib, etc)
+   • Download e conversão para .efh
+   • Cache de pacotes (256 KB por arquivo)
+
+4. SISTEMA DE ARQUIVOS EXECUTÁVEIS (.EFH)
+   • Formato de 256 bytes + código
+   • Validação de integridade
+   • Suporte a metadados (nome, versão, autor)
+
+5. DOCUMENTAÇÃO COMPLETA
+   • COMMANDS_REFERENCE.md - Guia de todos os comandos
+   • DOWNLOAD_CONVERSION_FLOW.md - Fluxo técnico
+   • QUICK_START.md - Início rápido em 30 segundos
+   • COMPLETE_GUIDE.md - Setup completo
+   • PACKAGES_CATALOG.md - Catálogo de 150+ pacotes
+
+═══════════════════════════════════════════════════════════════════════════
+
+COMO USAR:
+
+1. Boot via CD/DVD ou USB:
+   • Queimar ISO em mídia
+   • Reiniciar sistema
+   • Selecionar boot device como CD/DVD ou USB
+   
+2. Boot via QEMU (desenvolvimento):
+   • qemu-system-i386 -cdrom hubbleos.iso -m 256
+   
+3. Boot em hardware real:
+   • Compatível com BIOS legacy
+   • Requer 256 MB RAM mínimo
+
+═══════════════════════════════════════════════════════════════════════════
+
+COMANDOS DISPONÍVEIS:
+
+Sistema:      help, pwd, echo, clear, reboot, exit
+Arquivos:     ls, cat, touch, rm, mv, cp, chmod
+Diretórios:   cd, mkdir, rmdir
+Pacotes:      hpm list, hpm cat, hpm search, hpm info, hpm install,
+              hpm installed, hpm download, hpm convert, hpm cache
+
+═══════════════════════════════════════════════════════════════════════════
+
+EXEMPLO DE USO:
+
+hubble> help                      # Ver todos os comandos
+hubble> mkdir projects            # Criar diretório
+hubble> cd projects               # Entrar no diretório
+hubble> pwd                       # Ver diretório atual
+hubble> hpm list                  # Listar 150+ pacotes
+hubble> hpm search gcc            # Buscar gcc
+hubble> hpm info gcc              # Ver informações de gcc
+hubble> hpm download gcc          # Baixar gcc
+hubble> hpm convert gcc           # Converter para .efh
+hubble> ls *.efh                  # Ver arquivo criado
+hubble> hpm install gcc           # Instalar gcc
+hubble> hpm installed             # Ver instalados
+
+═══════════════════════════════════════════════════════════════════════════
+
+ESPECIFICAÇÕES:
+
+Kernel:
+  • Linguagem: C + NASM
+  • Linhas de código: 1,470
+  • Tamanho: 56 KB (compilado)
+  • Arquitetura: x86 32-bit
+  • Boot: Multiboot (GRUB2)
+
+Pacotes HPM:
+  • Total: 150+
+  • Categorias: 13
+  • Tamanho banco de dados: Embedded no kernel
+  • Cache: Até 10 pacotes simultâneos (256 KB cada)
+
+Filesystem Virtual:
+  • Max arquivos: 64
+  • Suporte a diretórios: ✓
+  • Permissões Unix: ✓ (755, 644, etc)
+  • Persistência: RAM-only (futuro: disco)
+
+═══════════════════════════════════════════════════════════════════════════
+
+PRÓXIMAS FASES:
+
+Fase 3: Rede Real
+  • TCP/IP stack (IPv4)
+  • HTTP/HTTPS downloader
+  • DNS resolver
+
+Fase 4: Execução de .EFH
+  • Loader de executáveis
+  • Chamadas de sistema (syscalls)
+  • Context switching
+
+Fase 5: Multitasking
+  • Scheduler preemptivo
+  • Sincronização entre processos
+  • IPC (pipes, sockets)
+
+═══════════════════════════════════════════════════════════════════════════
+
+SUPORTE E DOCUMENTAÇÃO:
+
+Consulte os arquivos de documentação inclusos:
+  • /doc/COMMANDS_REFERENCE.md - Referência completa
+  • /doc/QUICK_START.md - Início rápido
+  • /doc/DOWNLOAD_CONVERSION_FLOW.md - Arquitetura técnica
+
+═══════════════════════════════════════════════════════════════════════════
+
+Desenvolvido para x86 BIOS Legacy
+Compatible com GRUB2
+Open Source - GPL v3
+
+Bem-vindo ao HubbleOS v2.0! 🚀

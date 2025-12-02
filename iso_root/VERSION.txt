@@ -1,0 +1,6 @@
+HubbleOS v2.0
+Release Date: December 2024
+Architecture: x86 32-bit BIOS
+Kernel Size: 56 KB
+Packages: 150+
+Status: Production Ready
