@@ -254,3 +254,115 @@ int hpm_info(const char *pkg_name, hpm_package_t *info) {
     return -1;
 }
 
+/* Download cache for packages */
+static hpm_download_cache_t download_cache[HPM_MAX_DOWNLOADS];
+static int download_cache_count = 0;
+
+int hpm_download(const char *pkg_name, hpm_download_cache_t *cache) {
+    hpm_package_t info;
+    if (hpm_info(pkg_name, &info) != 0) return -1;
+    
+    /* Check if already cached */
+    for (int i = 0; i < download_cache_count; ++i) {
+        if (strcmp(download_cache[i].filename, pkg_name) == 0) {
+            *cache = download_cache[i];
+            return 0;
+        }
+    }
+    
+    if (download_cache_count >= HPM_MAX_DOWNLOADS) return -1;
+    
+    /* In production: http_get(info.url, &download_cache[download_cache_count].data);
+       For now, create stub EFH package locally */
+    
+    hpm_download_cache_t *cur = &download_cache[download_cache_count];
+    
+    /* Create minimal EFH header */
+    cur->data[0] = 'E';
+    cur->data[1] = 'F';
+    cur->data[2] = 'H';
+    cur->data[3] = '\0';
+    cur->data[4] = 0x01; /* version */
+    
+    /* Name in header (offset 8, 32 bytes) */
+    int i = 0;
+    while (i < 32 && pkg_name[i]) {
+        cur->data[8 + i] = pkg_name[i];
+        i++;
+    }
+    while (i < 32) cur->data[8 + i++] = 0;
+    
+    /* Version in header (offset 40, 16 bytes) */
+    const char *ver = info.version;
+    i = 0;
+    while (i < 16 && ver[i]) {
+        cur->data[40 + i] = ver[i];
+        i++;
+    }
+    while (i < 16) cur->data[40 + i++] = 0;
+    
+    /* Minimal stub code */
+    cur->data[256] = 0x90; /* nop */
+    cur->data[257] = 0xC3; /* ret */
+    
+    cur->size = 258;
+    cur->is_downloaded = 1;
+    
+    int n = 0;
+    while (n < 64 && pkg_name[n]) {
+        cur->filename[n] = pkg_name[n];
+        n++;
+    }
+    cur->filename[n] = '\0';
+    
+    *cache = download_cache[download_cache_count];
+    download_cache_count++;
+    
+    return 0;
+}
+
+int hpm_convert_to_efh(const char *pkg_name, const uint8_t *binary_data, uint32_t size) {
+    /* Convert raw binary to EFH format and save to filesystem */
+    hpm_package_t info;
+    if (hpm_info(pkg_name, &info) != 0) return -1;
+    
+    /* Create .efh file in filesystem */
+    char efh_path[80];
+    int i = 0;
+    while (i < 80 && pkg_name[i]) {
+        efh_path[i] = pkg_name[i];
+        i++;
+    }
+    efh_path[i++] = '.';
+    efh_path[i++] = 'e';
+    efh_path[i++] = 'f';
+    efh_path[i++] = 'h';
+    efh_path[i] = '\0';
+    
+    fs_write(efh_path, binary_data, size);
+    return 0;
+}
+
+int hpm_list_downloads(hpm_download_cache_t *downloads, int max) {
+    int cnt = download_cache_count < max ? download_cache_count : max;
+    for (int i = 0; i < cnt; ++i) {
+        downloads[i] = download_cache[i];
+    }
+    return cnt;
+}
+
+int hpm_extract_download(const char *filename, uint8_t *buf, int max) {
+    for (int i = 0; i < download_cache_count; ++i) {
+        if (strcmp(download_cache[i].filename, filename) == 0) {
+            int size = download_cache[i].size < max ? download_cache[i].size : max;
+            int j = 0;
+            while (j < size) {
+                buf[j] = download_cache[i].data[j];
+                j++;
+            }
+            return size;
+        }
+    }
+    return -1;
+}
+

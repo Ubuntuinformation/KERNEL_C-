@@ -4,7 +4,7 @@ ASM=nasm
 CFLAGS=-m32 -nostdlib -nostartfiles -fno-builtin -fno-exceptions -ffreestanding -O2 -Wall -Isrc
 LDFLAGS=-m elf_i386 -T src/linker.ld
 
-KERNEL_OBJS=src/start.o src/kernel.o src/drivers.o src/filesystem.o src/efh.o src/hpm.o src/string.o
+KERNEL_OBJS=src/start.o src/kernel.o src/drivers.o src/filesystem.o src/efh.o src/hpm.o src/network.o src/string.o
 KERNEL_BIN=kernel.bin
 
 all: iso
